@@ -2,7 +2,7 @@
 
 export default function Game() {
   return (
-    <main className="flex flex-col lg:flex-row justify-center items-center min-h-screen bg-gray-300">
+    <main className="flex flex-col lg:flex-row justify-center items-center min-h-screen bg-gray-700">
       <table className="table-fixed w-64 h-64 text-center">
         <tbody className="border-4 border-yellow-200">
           <tr className="border-4 border-yellow-200">
