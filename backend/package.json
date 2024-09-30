@@ -6,6 +6,9 @@
   "scripts": {
     "build": "tsc"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "keywords": [],
   "author": "",
   "dependencies": {
