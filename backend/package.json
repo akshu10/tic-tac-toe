@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "keywords": [],
-  "author": ""
+  "author": "",
+  "dependencies": {
+    "socket.io": "^4.8.0"
+  }
 }
