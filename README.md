@@ -1,28 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project 
 
-## Getting Started
+This project is inspired by the tic-tac-toe game.\
+Additionally i will make use of web sockets to allow player to create a custom game (to play with a friend) or join available games. 
 
-First, run the development server:
+--- 
 
-```bash
-pnpm dev
-```
+## Custom Game Road Map
+- Create rooms to represent a custom game
+- A custom room can have at 2 players at max 
+- A full room(2 players) means the clients can now play a game of tic-tac-toe against each other.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Join Random Game Road Map
+- A client can click on the play online button, and they should be able to join an available game room. The latter holds true, only if there is an available game room on the server. 
+- If a client is able to join a random game room, they should be able to play the game with the other client on the same game room. 
