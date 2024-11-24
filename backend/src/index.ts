@@ -30,8 +30,8 @@ io.on("connection", async (socket) => {
     console.log("Socket disconnected", socket.id);
   });
 
-  socket.on("createOrJoin", (data) => {
-    console.log("createOrJoin", data);
+  socket.on("start-custom-game", (data) => {
+    console.log("startCustomGame", data);
 
     socket.join(data.gameId);
     console.log(`Socket ${socket.id} joined room ${data.gameId}`);
@@ -41,16 +41,8 @@ io.on("connection", async (socket) => {
     // this is now working.
     socket
       .to(data.gameId)
-      .emit("playerJoined", { secondPlayer: "Player 2", gameId: data.gameId });
+      .emit("player-joined", { secondPlayer: "Player 2", gameId: data.gameId });
   });
-});
-
-io.of("/default").adapter.on("create-room", (room) => {
-  console.log(`room ${room} was created`);
-});
-
-io.of("/default").adapter.on("join-room", (room, id) => {
-  console.log(`socket ${id} has joined room ${room}`);
 });
 
 function reset() {
