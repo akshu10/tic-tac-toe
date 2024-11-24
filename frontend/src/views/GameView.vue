@@ -1,4 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import SquareButton from '@/components/SquareButton.vue'
+</script>
 
 <template>
   <main>
@@ -8,28 +11,47 @@
       </n-space>
     </div>
 
-    <section class="flex flex-col lg:flex-row justify-center items-center min-h-screen bg-black">
-      <!-- Button-->
-
-      <table class="table-fixed w-64 h-64 text-center">
-        <tbody class="border-4 border-yellow-200">
-          <tr class="border-4 border-yellow-200">
-            <td class="border-r-4 border-yellow-200 cursor-pointer bg-teal-200">1</td>
-            <td class="border-r-4 border-yellow-200 cursor-pointer bg-teal-200">2</td>
-            <td class="cursor-pointer bg-teal-200">3</td>
-          </tr>
-          <tr class="border-4 border-yellow-200">
-            <td class="border-r-4 border-yellow-200 cursor-pointer bg-teal-200">4</td>
-            <td class="border-r-4 border-yellow-200 cursor-pointer bg-teal-200">5</td>
-            <td class="cursor-pointer bg-teal-200">6</td>
-          </tr>
-          <tr>
-            <td class="border-r-4 border-yellow-200 cursor-pointer bg-teal-200">7</td>
-            <td class="border-r-4 border-yellow-200 cursor-pointer bg-teal-200">8</td>
-            <td class="cursor-pointer bg-teal-200">9</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <div class="flex flex-col justify-center items-center mt-32">
+      <h1 class="text-4xl text-white mb-12">Tic Tac Toe</h1>
+      <div class="flex flex-row border-4 border-[#9bc3bb]">
+        <SquareButton
+          value="1"
+          :onClick="() => console.log('Test')"
+          class="border-r-4"
+        ></SquareButton>
+        <SquareButton
+          value="2"
+          :onClick="() => console.log('Test')"
+          class="border-r-4"
+        ></SquareButton>
+        <SquareButton value="3" :onClick="() => console.log('Test')"></SquareButton>
+      </div>
+      <div class="flex flex-row border-x-4 border-[#9bc3bb]">
+        <SquareButton
+          value="4"
+          :onClick="() => console.log('Test')"
+          class="border-r-4"
+        ></SquareButton>
+        <SquareButton
+          value="5"
+          :onClick="() => console.log('Test')"
+          class="border-r-4"
+        ></SquareButton>
+        <SquareButton value="6" :onClick="() => console.log('Test')"></SquareButton>
+      </div>
+      <div class="flex flex-row border-4 border-[#9bc3bb]">
+        <SquareButton
+          value="7"
+          :onClick="() => console.log('Test')"
+          class="border-r-4"
+        ></SquareButton>
+        <SquareButton
+          value="8"
+          :onClick="() => console.log('Test')"
+          class="border-r-4"
+        ></SquareButton>
+        <SquareButton value="9" :onClick="() => console.log('Test')"></SquareButton>
+      </div>
+    </div>
   </main>
 </template>

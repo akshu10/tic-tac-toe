@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <button @click="onClick" class="border bg-white border-black w-20 h-16 text-lg">
+  <button @click="onClick" class="bg-white w-20 h-16 text-lg">
     {{ value }}
   </button>
 </template>
