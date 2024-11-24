@@ -1,9 +1,16 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>
-    <main class="flex flex-col lg:flex-row justify-center items-center min-h-screen bg-gray-700">
+  <main>
+    <div class="flex items-end justify-end px-12 pt-12">
+      <n-space>
+        <n-button dashed type="primary"> Quit </n-button>
+      </n-space>
+    </div>
+
+    <section class="flex flex-col lg:flex-row justify-center items-center min-h-screen bg-black">
       <!-- Button-->
+
       <table class="table-fixed w-64 h-64 text-center">
         <tbody class="border-4 border-yellow-200">
           <tr class="border-4 border-yellow-200">
@@ -23,6 +30,6 @@
           </tr>
         </tbody>
       </table>
-    </main>
-  </div>
+    </section>
+  </main>
 </template>
