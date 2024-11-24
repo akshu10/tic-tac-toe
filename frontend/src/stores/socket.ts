@@ -7,6 +7,12 @@ export const useSocketStore = defineStore('socket', () => {
   const connectedSocket = ref<Socket>()
   const connectedSocketId = ref<string | null>()
 
+  /**
+   *
+   * @param _gameId - game id to join or create a custom game
+   *
+   * Connects to the socket server
+   */
   function connectSocket(_gameId?: string) {
     // if game id is provided, user intends to join/create a custom game
     const socket = io('http://localhost:8080', {})
@@ -30,15 +36,6 @@ export const useSocketStore = defineStore('socket', () => {
     connectedSocket.value?.emit('start-custom-game', { gameId })
   }
 
-  function listAllSockets() {
-    if (!connectedSocket.value || connectedSocket.value.connected === false) {
-      console.log('No sockets connected')
-      return
-    }
-
-    console.log('Connected socket:', connectedSocket.value)
-  }
-
   function disconnectSocket(gameId: string) {
     console.log('Disconnecting socket', gameId)
 
@@ -47,7 +44,6 @@ export const useSocketStore = defineStore('socket', () => {
 
   return {
     connectSocket,
-    listAllSockets,
     disconnectSocket,
   }
 })
