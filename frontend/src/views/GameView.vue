@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import SquareButton from '@/components/SquareButton.vue'
+import { useSocketStore } from '@/stores/socket'
+
+const { disconnectSocket } = useSocketStore()
 
 const xIsNext = ref(true)
 const squares = ref<(string | null)[][]>(new Array(3))
@@ -32,7 +35,7 @@ const handleOnClick = (index: number) => {
   <main>
     <div class="flex items-end justify-end px-12 pt-12">
       <n-space>
-        <n-button dashed type="primary"> Quit </n-button>
+        <n-button dashed type="info" size="large" @click="disconnectSocket()"> Quit </n-button>
       </n-space>
     </div>
 
