@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+// import { useRouter } from 'vue-router'
 import { useSocketStore } from '@/stores/socket'
 
-const router = useRouter()
-const { connectSocket, disconnectSocket } = useSocketStore()
+const { connectSocket, disconnectSocket, setGameId } = useSocketStore()
 
 const gameId = ref('')
 const showAlert = ref(false)
 const alertMessage = ref('')
+const loading = ref(false)
+
+onMounted(() => {
+  loading.value = false
+  showAlert.value = false
+})
 
 const createGame = () => {
   if (gameId.value === '') {
@@ -18,9 +23,12 @@ const createGame = () => {
     return
   }
   console.log('Starting game...')
-  connectSocket(gameId.value)
+  setGameId(gameId.value)
+  connectSocket()
 
-  router.push('/game')
+  loading.value = true
+
+  // router.push('/game')
 }
 </script>
 
@@ -55,14 +63,14 @@ const createGame = () => {
 
         <!-- Create Game Button-->
         <div class="mb-4">
-          <button
-            class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-2xl font-mono bg-yellow-200 cursor-pointer"
-            type="button"
+          <n-button
+            :loading="loading"
+            icon-placement="left"
             @click="createGame"
+            class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-2xl font-mono bg-yellow-200 cursor-pointer"
           >
-            CREATE GAME
-          </button>
-
+            {{ loading ? 'Waiting for second player to join' : 'Create Custom Game' }}
+          </n-button>
           <button
             class="mt-8 shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-2xl font-mono bg-red-200 cursor-pointer"
             type="button"
