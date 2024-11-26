@@ -3,5 +3,5 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <RouterView />
+  <RouterView class="bg-[#56445d] h-screen" />
 </template>
