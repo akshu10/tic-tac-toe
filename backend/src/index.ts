@@ -15,42 +15,87 @@ const io = new Server({
 
 io.attach(PORT);
 
-// Array to track connected sockets
-const connectedSockets: Socket[] = [];
-const gameRooms: Set<string> = new Set();
-
-io.on("connection", async (socket) => {
+io.on("connection", async (socket: Socket) => {
   // Emit a connection event to the client
   socket.emit("connection", { id: socket.id });
 
-  connectedSockets.push(socket);
-
   // Register event listeners for each socket here
-  socket.on("disconnect", () => {
-    console.log("Socket disconnected", socket.id);
+  socket.on("custom-disconnect", async (data) => {
+    console.log("custom-disconnect", data);
+
+    const socketsInRoom = await io.in(data.gameRoomId).fetchSockets();
+    const socketIds = socketsInRoom.map((s) => s.id);
+
+    console.log("Sockets in room CustomDisconnect: ", socketIds);
+
+    // disconnect all sockets in the room
+    socketsInRoom.forEach((s) => {
+      s.leave(data.gameRoomId);
+      s.disconnect();
+    });
   });
 
-  socket.on("start-custom-game", (data) => {
+  socket.on("start-custom-game", async (data) => {
     console.log("startCustomGame", data);
 
-    socket.join(data.gameId);
-    console.log(`Socket ${socket.id} joined room ${data.gameId}`);
-    gameRooms.add(socket.data.gameId);
+    let socketsInRoom = await io.in(data.gameId).fetchSockets();
+    let socketIds = socketsInRoom.map((s) => s.id);
 
-    // this will broadcast to all sockets in the room except the current
-    // this is now working.
-    socket
-      .to(data.gameId)
-      .emit("player-joined", { secondPlayer: "Player 2", gameId: data.gameId });
+    if (socketsInRoom.length === 2) {
+      console.log("Game room is full");
+      io.emit("game-room-full", { gameId: data.gameId });
+
+      return;
+    }
+
+    socket.join(data.gameId);
+
+    socketsInRoom = await io.in(data.gameId).fetchSockets();
+    socketIds = socketsInRoom.map((s) => s.id);
+
+    // Randomly select a player that will start the game, in the game room\
+    console.log(`players in room ${data.gameId}`, socketIds);
+
+    if (socketIds.length === 2) {
+      const startingPlayer = socketIds[getRandomNumber()];
+
+      console.log(`Starting player ${startingPlayer}`);
+
+      // this will broadcast to all sockets in the room except the current
+      // this is now working.
+      socket.to(data.gameId).emit("player-joined", {
+        secondPlayer: "Player 2",
+        gameId: data.gameId,
+      });
+    } else if (socketIds.length === 1) {
+      io.to(socket.id).emit("waiting-for-player", { gameId: data.gameId });
+    }
   });
 });
 
-function reset() {
-  logger.info(`resetting  ${connectedSockets.length} sockets`);
-  connectedSockets.forEach((s) => {
-    console.log("disconnecting", s.id);
-    s.disconnect();
-  });
+/**
+ *
+ * @returns 0 or 1
+ *
+ * This function returns a random number between 0 and 1
+ */
+function getRandomNumber() {
+  const randomIndex = Math.floor(Math.random() * 2);
+  return randomIndex;
+}
+
+async function reset() {
+  const connectedSockets = await io.fetchSockets();
+  const socketIds = connectedSockets.map((s) => s.id);
+
+  logger.info(`resetting  ${socketIds.length} sockets`);
+
+  if (connectedSockets.length) {
+    connectedSockets.forEach((s) => {
+      console.log("disconnecting", s.id);
+      s.disconnect();
+    });
+  }
 }
 
 function killProcess(port: number) {
@@ -67,7 +112,6 @@ function killProcess(port: number) {
 
 ["SIGINT", "SIGTERM", "SIGQUIT"].forEach((signal) => {
   process.on(signal, async () => {
-    console.log(`Received ${signal}, cleaning up...`);
     reset();
     // Perform cleanup operations here
     await killProcess(PORT);
