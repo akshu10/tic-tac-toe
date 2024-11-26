@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
 import { useSocketStore } from '@/stores/socket'
 
+const router = useRouter()
 const { connectSocket, disconnectSocket } = useSocketStore()
 
 const gameId = ref('')
@@ -10,18 +11,16 @@ const showAlert = ref(false)
 const alertMessage = ref('')
 
 const createGame = () => {
-  //TODO: uncomment later
-  // if (gameId.value === '') {
-  //   alertMessage.value =
-  //     'Game ID is required to create a custom game. Please enter a game ID and try again.'
-  //   showAlert.value = true
-  //   return
-  // }
+  if (gameId.value === '') {
+    alertMessage.value =
+      'Game ID is required to create a custom game. Please enter a game ID and try again.'
+    showAlert.value = true
+    return
+  }
   console.log('Starting game...')
-  connectSocket()
+  connectSocket(gameId.value)
 
-  // Redirect to game room
-  // router.push({ name: 'GameRoom', params: { gameId: gameId.value } })
+  router.push('/game')
 }
 </script>
 
@@ -29,7 +28,13 @@ const createGame = () => {
   <main>
     <div class="flex flex-col h-screen justify-center items-center">
       <!-- Error Alert -->
-      <n-alert v-if="showAlert" title="Error" type="error" closable class="max-w-2xl mb-16">
+      <n-alert
+        v-if="showAlert && gameId.length < 1"
+        title="Error"
+        type="error"
+        closable
+        class="max-w-2xl mb-16"
+      >
         {{ alertMessage }}
       </n-alert>
       <div class="mb-4 bg-white shadow-md rounded px-8 pt-6 pb-8">
@@ -61,7 +66,7 @@ const createGame = () => {
           <button
             class="mt-8 shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-2xl font-mono bg-red-200 cursor-pointer"
             type="button"
-            @click="disconnectSocket('5wec1')"
+            @click="disconnectSocket()"
           >
             Disconnect Socket
           </button>
