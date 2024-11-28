@@ -1,6 +1,6 @@
 # Project 
 
-This project is inspired by the tic-tac-toe game.\
+This project is inspired by the tic-tac-toe game.
 Additionally i will make use of web sockets to allow player to create a custom game (to play with a friend) or join available games. 
 
 --- 
