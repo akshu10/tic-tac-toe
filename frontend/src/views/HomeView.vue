@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useSocketStore } from '@/stores/socket'
 
 const { connectSocket, disconnectSocket, setGameId } = useSocketStore()
-
+const router = useRouter()
 const gameId = ref('')
 const showAlert = ref(false)
 const alertMessage = ref('')
@@ -28,7 +28,7 @@ const createGame = () => {
 
   loading.value = true
 
-  // router.push('/game')
+  router.push('/game')
 }
 </script>
 
