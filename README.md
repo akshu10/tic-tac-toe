@@ -21,8 +21,19 @@ Additionally i will make use of web sockets to allow player to create a custom g
 ## Client Events
 
 start-custom-game - Emitted when a client wants to join a custom game.
+custom-disconnect - custom disconnect to the server, to allow server to clean up resources
+s
  
 
 ## Server Events
 Connection - Emitted when a client successfully joins the IO server.
 player-joined - Emitted when a second client joins a custom game room
+waiting-for-player - tbd if needed but exists currently.
+
+--- 
+
+## > TODO
+4. where should the other player wait for the second player to join?
+1. Implement game logic between game room players. 
+2. Add logic to check if a player is the winner of the game 
+3. Both players should be notified which player won the game 
