@@ -13,6 +13,7 @@ interface SocketStore {
   disconnectSocket: () => void
   setGameId: (gameId: string) => void
   move: (board: (string | null)[][]) => void
+  getDisableBoard: () => boolean
 }
 
 export const useSocketStore = defineStore('socket', (): SocketStore => {
@@ -20,6 +21,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
   const connectedSocketId = ref<string | null>()
   const router = useRouter()
   const customGameId = ref<string | null>()
+  const disableBoard = ref<boolean>(true)
 
   /**
    *
@@ -41,14 +43,13 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
       }
     })
 
-    socket.on('player-joined', (data: Record<string, string>) => {
+    socket.on('player:joined', (data: Record<string, string>) => {
       console.log('Player joined', data)
-
-      router.push('/game')
     })
 
     socket.on('waiting-for-player', (data: Record<string, string>) => {
       console.log('Waiting for player 2 to join custom game', data)
+      disableBoard.value = false
     })
 
     socket.on('game-room-full', (data: Record<string, string>) => {
@@ -91,12 +92,17 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     connectedSocket?.value?.emit('move', { board })
   }
 
+  function getDisableBoard() {
+    return disableBoard.value
+  }
+
   return {
     connectedSocket,
     connectSocket,
     disconnectSocket,
     setGameId,
     move,
+    getDisableBoard,
   }
 })
 
