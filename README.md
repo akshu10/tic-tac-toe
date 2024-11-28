@@ -22,7 +22,6 @@ Additionally i will make use of web sockets to allow player to create a custom g
 
 start-custom-game - Emitted when a client wants to join a custom game.
 custom-disconnect - custom disconnect to the server, to allow server to clean up resources
-s
  
 
 ## Server Events
@@ -33,11 +32,17 @@ waiting-for-player - tbd if needed but exists currently.
 --- 
 
 ## > TODO
+
+### Backend
 4. where should the other player wait for the second player to join?
 1. Implement game logic between game room players. 
 2. Add logic to check if a player is the winner of the game 
 3. Both players should be notified which player won the game 
 5. clear out room resources after both players leave the room
+
+### Frontend
+6. Display a message on the client if they are passing in a similar id to an existing room. 
+7. Add some logic to handle randomness of the starting player (determined on the server). The player picked by the server should start the game. 
 
 
 ## Completed 
