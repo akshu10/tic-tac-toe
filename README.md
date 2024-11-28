@@ -43,6 +43,8 @@ waiting-for-player - tbd if needed but exists currently.
 ### Frontend
 6. Display a message on the client if they are passing in a similar id to an existing room. 
 7. Add some logic to handle randomness of the starting player (determined on the server). The player picked by the server should start the game. 
+8. we want to collect player name so that we can display the name on the game screen
+9. The game screen will have an icon for each player that will have an active class border when its that players turn. 
 
 
 ## Completed 
