@@ -37,3 +37,11 @@ waiting-for-player - tbd if needed but exists currently.
 1. Implement game logic between game room players. 
 2. Add logic to check if a player is the winner of the game 
 3. Both players should be notified which player won the game 
+5. clear out room resources after both players leave the room
+
+
+## Completed 
+1. Create game room 
+2. Add players to game room 
+3. Enforce maximum limit of 2 per room
+4. Do not allow duplicate game rooms? (validate if exists). 
