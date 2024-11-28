@@ -1,11 +1,22 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 
-import { io, Socket } from 'socket.io-client'
+import { io } from 'socket.io-client'
+import type { Socket as SocketType } from 'socket.io-client'
 
-export const useSocketStore = defineStore('socket', () => {
-  const connectedSocket = ref<Socket>()
+let connectedSocket: SocketType | undefined
+
+interface SocketStore {
+  connectedSocket: Ref<SocketType | undefined>
+  connectSocket: () => void
+  disconnectSocket: () => void
+  setGameId: (gameId: string) => void
+  move: (board: (string | null)[][]) => void
+}
+
+export const useSocketStore = defineStore('socket', (): SocketStore => {
+  const connectedSocket = ref<SocketType | undefined>()
   const connectedSocketId = ref<string | null>()
   const router = useRouter()
   const customGameId = ref<string | null>()
@@ -54,13 +65,13 @@ export const useSocketStore = defineStore('socket', () => {
   function startCustomGame(gameId: string) {
     console.log('Creating or joining a custom game', gameId)
 
-    connectedSocket.value?.emit('start-custom-game', { gameId })
+    connectedSocket?.value?.emit('start-custom-game', { gameId })
   }
 
   function customDisconnectSocket() {
-    connectedSocket.value?.emit('custom-disconnect', { gameRoomId: customGameId.value })
+    connectedSocket?.value?.emit('custom-disconnect', { gameRoomId: customGameId.value })
 
-    connectedSocket.value?.disconnect()
+    connectedSocket?.value?.disconnect()
     connectedSocket.value = undefined
     connectedSocketId.value = null
     customGameId.value = null
@@ -76,9 +87,17 @@ export const useSocketStore = defineStore('socket', () => {
     customGameId.value = gameId
   }
 
+  function move(board: (string | null)[][]) {
+    connectedSocket?.value?.emit('move', { board })
+  }
+
   return {
+    connectedSocket,
     connectSocket,
     disconnectSocket,
     setGameId,
+    move,
   }
 })
+
+export { connectedSocket }
