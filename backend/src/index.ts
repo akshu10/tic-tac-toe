@@ -63,13 +63,22 @@ io.on("connection", async (socket: Socket) => {
 
       // this will broadcast to all sockets in the room except the current
       // this is now working.
-      socket.to(data.gameId).emit("player-joined", {
+      socket.to(data.gameId).emit("player:joined", {
         secondPlayer: "Player 2",
         gameId: data.gameId,
       });
     } else if (socketIds.length === 1) {
       io.to(socket.id).emit("waiting-for-player", { gameId: data.gameId });
     }
+  });
+
+  // move event
+  socket.on("move", (data) => {
+    console.log("Move event", data);
+
+    socket.to(data.gameId).emit("board:refresh", {
+      board: data.board,
+    });
   });
 });
 
