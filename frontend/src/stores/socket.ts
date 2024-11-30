@@ -10,6 +10,7 @@ let connectedSocket: SocketType | undefined
 interface SocketStore {
   connectedSocket: Ref<SocketType | undefined>
   selfTurn: Ref<boolean>
+  character: Ref<string>
   board: Ref<(string | null)[][]>
   connectSocket: () => void
   disconnectSocket: () => void
@@ -29,6 +30,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
   const disableBoard = ref<boolean>(false)
   const selfTurn = ref<boolean>(false)
   const board = ref<(string | null)[][]>(new Array(3).fill(null).map(() => new Array(3).fill(null)))
+  const character = ref<string>('X')
 
   /**
    * Connects to the socket server and initiates the starting of a custom game, if the game id
@@ -42,6 +44,8 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
       connectedSocketId.value = data.id
       connectedSocket.value = socket
 
+      console.log('Connected to socket server', socket.id)
+
       if (customGameId.value) {
         startCustomGame(customGameId.value)
       }
@@ -53,6 +57,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
         selfTurn.value = true
       } else {
         selfTurn.value = false
+        character.value = 'O'
       }
 
       // enable the board
@@ -68,10 +73,11 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     })
 
     socket.on('board:refresh', (data: { gameId: string; board: (string | null)[][] }) => {
-      console.log('Board refresh', data)
-
       // update the board
       board.value = data.board
+
+      // toggle self turn
+      toggleSelfTurn()
     })
   }
 
@@ -89,6 +95,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     playerName.value = null
     disableBoard.value = true
     selfTurn.value = false
+    character.value = 'X'
     board.value = new Array(3).fill(null).map(() => new Array(3).fill(null))
 
     router.push('/')
@@ -103,7 +110,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
   }
 
   function getDisableBoard() {
-    return disableBoard.value
+    return disableBoard.value || !selfTurn.value
   }
 
   function setPlayerName(input: string) {
@@ -129,6 +136,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     selfTurn,
     toggleSelfTurn,
     emitMoveEvent,
+    character,
   }
 })
 
