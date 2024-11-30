@@ -1,4 +1,4 @@
-import { Server, RemoteSocket, DefaultEventsMap, Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 import { exec } from "child_process";
 
@@ -17,16 +17,14 @@ io.attach(PORT);
 
 io.on("connection", async (socket: Socket) => {
   // Emit a connection event to the client
-  socket.emit("connection", { id: socket.id });
+  socket.emit("connection", {
+    id: socket.id,
+  });
 
   // Register event listeners for each socket here
-  socket.on("custom-disconnect", async (data) => {
-    console.log("custom-disconnect", data);
-
+  socket.on("custom:disconnect", async (data) => {
     const socketsInRoom = await io.in(data.gameRoomId).fetchSockets();
     const socketIds = socketsInRoom.map((s) => s.id);
-
-    console.log("Sockets in room CustomDisconnect: ", socketIds);
 
     // disconnect all sockets in the room
     socketsInRoom.forEach((s) => {
@@ -35,15 +33,12 @@ io.on("connection", async (socket: Socket) => {
     });
   });
 
-  socket.on("start-custom-game", async (data) => {
-    console.log("startCustomGame", data);
-
+  socket.on("game:custom", async (data) => {
     let socketsInRoom = await io.in(data.gameId).fetchSockets();
     let socketIds = socketsInRoom.map((s) => s.id);
 
     if (socketsInRoom.length === 2) {
-      console.log("Game room is full");
-      io.emit("game-room-full", { gameId: data.gameId });
+      io.emit("game:full", { gameId: data.gameId });
 
       return;
     }
@@ -53,30 +48,24 @@ io.on("connection", async (socket: Socket) => {
     socketsInRoom = await io.in(data.gameId).fetchSockets();
     socketIds = socketsInRoom.map((s) => s.id);
 
-    // Randomly select a player that will start the game, in the game room\
-    console.log(`players in room ${data.gameId}`, socketIds);
-
     if (socketIds.length === 2) {
       const startingPlayer = socketIds[getRandomNumber()];
 
-      console.log(`Starting player ${startingPlayer}`);
-
-      // this will broadcast to all sockets in the room except the current
-      // this is now working.
-      socket.to(data.gameId).emit("player:joined", {
-        secondPlayer: "Player 2",
+      // emit to all clients in the room, to start the game
+      io.to(data.gameId).emit("game:start", {
         gameId: data.gameId,
+        turn: startingPlayer,
       });
     } else if (socketIds.length === 1) {
-      io.to(socket.id).emit("waiting-for-player", { gameId: data.gameId });
+      io.to(socket.id).emit("player:waiting", { gameId: data.gameId });
     }
   });
 
   // move event
-  socket.on("move", (data) => {
-    console.log("Move event", data);
-
+  socket.on("player:move", (data) => {
+    // emit to all clients in the room, except the sender
     socket.to(data.gameId).emit("board:refresh", {
+      gameId: data.gameId,
       board: data.board,
     });
   });
