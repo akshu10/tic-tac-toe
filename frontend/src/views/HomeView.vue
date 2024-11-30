@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useSocketStore } from '@/stores/socket'
 
-const { connectSocket, disconnectSocket, setGameId } = useSocketStore()
-
+const store = useSocketStore()
+const { connectSocket, disconnectSocket, setGameId } = store
+const router = useRouter()
 const gameId = ref('')
 const showAlert = ref(false)
 const alertMessage = ref('')
 const loading = ref(false)
+const playerName = ref('')
 
 onMounted(() => {
   loading.value = false
@@ -22,13 +24,13 @@ const createGame = () => {
     showAlert.value = true
     return
   }
-  console.log('Starting game...')
+
   setGameId(gameId.value)
   connectSocket()
 
   loading.value = true
 
-  // router.push('/game')
+  router.push('/game')
 }
 </script>
 
@@ -46,7 +48,18 @@ const createGame = () => {
         {{ alertMessage }}
       </n-alert>
       <div class="mb-4 bg-white shadow-md rounded px-8 pt-6 pb-8">
+        <label class="block text-black font-bold mb-5 text-lg tracking-wider" htmlFor="player-name">
+          Player Name
+        </label>
+        <input
+          class="border rounded-md w-full h-14 py-2 px-3 mb-6 text-black placeholder-gray-400 bg-gray-200 ring-2 focus:ring-lime-500 hover:ring-lime-500 focus:outline-none focus:shadow-outline tracking-widest"
+          id="player-name"
+          type="text"
+          v-model="playerName"
+        />
+
         <!--Game room Input-->
+
         <label
           class="block text-black font-bold mb-5 text-lg tracking-wider"
           htmlFor="game-room-id"
