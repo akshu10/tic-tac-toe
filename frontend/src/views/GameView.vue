@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import SquareButton from '@/components/SquareButton.vue'
 import { useSocketStore } from '@/stores/socket'
 
 const store = useSocketStore()
-const { disconnectSocket, move, getDisableBoard, toggleSelfTurn } = store
-const { selfTurn } = storeToRefs(store)
-
-const squares = ref<(string | null)[][]>(new Array(3))
-
-for (let i = 0; i < squares.value.length; i++) {
-  squares.value[i] = Array(3).fill(null)
-}
+const { disconnectSocket, getDisableBoard, toggleSelfTurn, emitMoveEvent } = store
+const { selfTurn, board } = storeToRefs(store)
 
 const handleOnClick = (index: number) => {
-  const flattenedArray = squares.value.flat()
+  const flattenedArray = board.value.flat()
 
   if (selfTurn.value) {
     // should listen to click and render wx in that square
@@ -27,11 +20,11 @@ const handleOnClick = (index: number) => {
     toggleSelfTurn()
   }
 
-  squares.value[0] = flattenedArray.splice(0, 3)
-  squares.value[1] = flattenedArray.splice(0, 3)
-  squares.value[2] = flattenedArray.splice(0, 3)
+  board.value[0] = flattenedArray.splice(0, 3)
+  board.value[1] = flattenedArray.splice(0, 3)
+  board.value[2] = flattenedArray.splice(0, 3)
 
-  move(squares.value)
+  emitMoveEvent()
 }
 </script>
 
@@ -64,57 +57,57 @@ const handleOnClick = (index: number) => {
         <div class="flex flex-col">
           <div class="flex flex-row border-4 border-[#9bc3bb]">
             <SquareButton
-              :value="squares[0][0]"
+              :value="board[0][0]"
               :onClick="() => handleOnClick(0)"
               class="border-r-4"
               :disabled="getDisableBoard()"
             ></SquareButton>
             <SquareButton
-              :value="squares[0][1]"
+              :value="board[0][1]"
               :onClick="() => handleOnClick(1)"
               class="border-r-4"
               :disabled="getDisableBoard()"
             ></SquareButton>
             <SquareButton
-              :value="squares[0][2]"
+              :value="board[0][2]"
               :onClick="() => handleOnClick(2)"
               :disabled="getDisableBoard()"
             ></SquareButton>
           </div>
           <div class="flex flex-row border-x-4 border-[#9bc3bb]">
             <SquareButton
-              :value="squares[1][0]"
+              :value="board[1][0]"
               :onClick="() => handleOnClick(3)"
               class="border-r-4"
               :disabled="getDisableBoard()"
             ></SquareButton>
             <SquareButton
-              :value="squares[1][1]"
+              :value="board[1][1]"
               :onClick="() => handleOnClick(4)"
               class="border-r-4"
               :disabled="getDisableBoard()"
             ></SquareButton>
             <SquareButton
-              :value="squares[1][2]"
+              :value="board[1][2]"
               :onClick="() => handleOnClick(5)"
               :disabled="getDisableBoard()"
             ></SquareButton>
           </div>
           <div class="flex flex-row border-4 border-[#9bc3bb]">
             <SquareButton
-              :value="squares[2][0]"
+              :value="board[2][0]"
               :onClick="() => handleOnClick(6)"
               class="border-r-4"
               :disabled="getDisableBoard()"
             ></SquareButton>
             <SquareButton
-              :value="squares[2][1]"
+              :value="board[2][1]"
               :onClick="() => handleOnClick(7)"
               class="border-r-4"
               :disabled="getDisableBoard()"
             ></SquareButton>
             <SquareButton
-              :value="squares[2][2]"
+              :value="board[2][2]"
               :onClick="() => handleOnClick(8)"
               :disabled="getDisableBoard()"
             ></SquareButton>
