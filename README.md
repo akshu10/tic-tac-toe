@@ -51,9 +51,13 @@ waiting-for-player - tbd if needed but exists currently.
 1. Create game room 
 2. Add players to game room 
 3. Enforce maximum limit of 2 per room
-4. Do not allow duplicate game rooms? (validate if exists). 
+4. Do not allow duplicate game rooms? (validate if exists).
 
-
+> November 30th 
+5. Players can now see each others moves on their respective boards
+6. Add player icons to game view screen
+7. Enhance emitted event names on both server and client 
+8. Move all GameView refs to the socket store 
 
 
 
