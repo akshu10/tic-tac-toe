@@ -10,13 +10,14 @@ let connectedSocket: SocketType | undefined
 interface SocketStore {
   connectedSocket: Ref<SocketType | undefined>
   selfTurn: Ref<boolean>
+  board: Ref<(string | null)[][]>
   connectSocket: () => void
   disconnectSocket: () => void
   setGameId: (gameId: string) => void
   setPlayerName: (playerName: string) => void
-  move: (board: (string | null)[][]) => void
   getDisableBoard: () => boolean
   toggleSelfTurn: () => void
+  emitMoveEvent: () => void
 }
 
 export const useSocketStore = defineStore('socket', (): SocketStore => {
@@ -25,13 +26,11 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
   const router = useRouter()
   const customGameId = ref<string | null>()
   const playerName = ref<string | null>()
-  const disableBoard = ref<boolean>(true)
+  const disableBoard = ref<boolean>(false)
   const selfTurn = ref<boolean>(false)
+  const board = ref<(string | null)[][]>(new Array(3).fill(null).map(() => new Array(3).fill(null)))
 
   /**
-   *
-   * @param _gameId - game id to join or create a custom game
-   *
    * Connects to the socket server and initiates the starting of a custom game, if the game id
    * is provided.
    */
@@ -39,7 +38,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     // if game id is provided, user intends to join/create a custom game
     const socket = io('http://localhost:8080', {})
 
-    socket.on('connection', (data: Record<string, string>) => {
+    socket.on('connection', (data: { id: string }) => {
       connectedSocketId.value = data.id
       connectedSocket.value = socket
 
@@ -48,9 +47,7 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
       }
     })
 
-    socket.on('game:start', (data: Record<string, string>) => {
-      console.log('Player joined', data)
-
+    socket.on('game:start', (data: { gameId: string; turn: string }) => {
       // get first players turn
       if (data.turn === connectedSocketId.value) {
         selfTurn.value = true
@@ -62,35 +59,37 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
       disableBoard.value = false
     })
 
-    socket.on('waiting-for-player', (data: Record<string, string>) => {
-      console.log('Waiting for player 2 to join custom game', data)
+    socket.on('player:waiting', () => {
       disableBoard.value = true
     })
 
-    socket.on('game-room-full', (data: Record<string, string>) => {
+    socket.on('game:full', (data: { gameId: string }) => {
       console.log('Game room full', data)
     })
 
-    socket.on('player-disconnected', (data: Record<string, string>) => {
-      console.log('Player disconnected', data)
+    socket.on('board:refresh', (data: { gameId: string; board: (string | null)[][] }) => {
+      console.log('Board refresh', data)
 
-      router.push('/')
+      // update the board
+      board.value = data.board
     })
   }
 
   function startCustomGame(gameId: string) {
-    console.log('Creating or joining a custom game', gameId)
-
-    connectedSocket?.value?.emit('start-custom-game', { gameId })
+    connectedSocket?.value?.emit('game:custom', { gameId })
   }
 
   function customDisconnectSocket() {
-    connectedSocket?.value?.emit('custom-disconnect', { gameRoomId: customGameId.value })
+    connectedSocket?.value?.emit('custom:disconnect', { gameRoomId: customGameId.value })
 
     connectedSocket?.value?.disconnect()
     connectedSocket.value = undefined
     connectedSocketId.value = null
     customGameId.value = null
+    playerName.value = null
+    disableBoard.value = true
+    selfTurn.value = false
+    board.value = new Array(3).fill(null).map(() => new Array(3).fill(null))
 
     router.push('/')
   }
@@ -101,10 +100,6 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
 
   function setGameId(gameId: string) {
     customGameId.value = gameId
-  }
-
-  function move(board: (string | null)[][]) {
-    connectedSocket?.value?.emit('move', { board })
   }
 
   function getDisableBoard() {
@@ -119,16 +114,21 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     selfTurn.value = !selfTurn.value
   }
 
+  function emitMoveEvent() {
+    connectedSocket?.value?.emit('player:move', { gameId: customGameId.value, board: board.value })
+  }
+
   return {
     connectedSocket,
+    board,
     connectSocket,
     disconnectSocket,
     setGameId,
-    move,
     getDisableBoard,
     setPlayerName,
     selfTurn,
     toggleSelfTurn,
+    emitMoveEvent,
   }
 })
 
