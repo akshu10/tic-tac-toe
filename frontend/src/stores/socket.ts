@@ -9,11 +9,14 @@ let connectedSocket: SocketType | undefined
 
 interface SocketStore {
   connectedSocket: Ref<SocketType | undefined>
+  selfTurn: Ref<boolean>
   connectSocket: () => void
   disconnectSocket: () => void
   setGameId: (gameId: string) => void
+  setPlayerName: (playerName: string) => void
   move: (board: (string | null)[][]) => void
   getDisableBoard: () => boolean
+  toggleSelfTurn: () => void
 }
 
 export const useSocketStore = defineStore('socket', (): SocketStore => {
@@ -21,7 +24,9 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
   const connectedSocketId = ref<string | null>()
   const router = useRouter()
   const customGameId = ref<string | null>()
+  const playerName = ref<string | null>()
   const disableBoard = ref<boolean>(true)
+  const selfTurn = ref<boolean>(false)
 
   /**
    *
@@ -43,13 +48,23 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
       }
     })
 
-    socket.on('player:joined', (data: Record<string, string>) => {
+    socket.on('game:start', (data: Record<string, string>) => {
       console.log('Player joined', data)
+
+      // get first players turn
+      if (data.turn === connectedSocketId.value) {
+        selfTurn.value = true
+      } else {
+        selfTurn.value = false
+      }
+
+      // enable the board
+      disableBoard.value = false
     })
 
     socket.on('waiting-for-player', (data: Record<string, string>) => {
       console.log('Waiting for player 2 to join custom game', data)
-      disableBoard.value = false
+      disableBoard.value = true
     })
 
     socket.on('game-room-full', (data: Record<string, string>) => {
@@ -96,6 +111,14 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     return disableBoard.value
   }
 
+  function setPlayerName(input: string) {
+    playerName.value = input
+  }
+
+  function toggleSelfTurn() {
+    selfTurn.value = !selfTurn.value
+  }
+
   return {
     connectedSocket,
     connectSocket,
@@ -103,6 +126,9 @@ export const useSocketStore = defineStore('socket', (): SocketStore => {
     setGameId,
     move,
     getDisableBoard,
+    setPlayerName,
+    selfTurn,
+    toggleSelfTurn,
   }
 })
 
