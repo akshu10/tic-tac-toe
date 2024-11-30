@@ -52,3 +52,16 @@ waiting-for-player - tbd if needed but exists currently.
 2. Add players to game room 
 3. Enforce maximum limit of 2 per room
 4. Do not allow duplicate game rooms? (validate if exists). 
+
+
+
+
+
+## Latest Work done
+1. Add state to the FE to track whether the board is active/disabled 
+2. Add events for move and board:refresh  
+3. Add disabled state to the square button component
+
+
+
+
