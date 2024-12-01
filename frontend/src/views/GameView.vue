@@ -36,10 +36,10 @@ const handleOnClick = (index: number) => {
       </n-space>
     </div>
 
-    <div class="flex flex-col justify-center items-center mt-32">
+    <div class="flex flex-col justify-center items-center mt-16">
       <h1 class="text-4xl text-white mb-12">Tic Tac Toe</h1>
 
-      <div class="flex gap-36 items-center">
+      <div class="flex flex-col sm:flex-row gap-16 max-w-md items-center">
         <div class="block text-center text-2xl">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +77,8 @@ const handleOnClick = (index: number) => {
               :value="board[0][2]"
               :onClick="() => handleOnClick(2)"
               :disabled="getDisableBoard()"
-            ></SquareButton>
+            >
+            </SquareButton>
           </div>
           <div class="flex flex-row border-x-4 border-[#9bc3bb]">
             <SquareButton
@@ -98,12 +99,14 @@ const handleOnClick = (index: number) => {
               :disabled="getDisableBoard()"
             ></SquareButton>
           </div>
-          <div class="flex flex-row border-4 border-[#9bc3bb]">
+          <div class="relative flex flex-row border-4 border-[#9bc3bb]">
+            <!-- <div class="absolute w-7/8 h-[1px] bg-blue-900 top-8 left-3 right-3"></div> -->
             <SquareButton
               :value="board[2][0]"
               :onClick="() => handleOnClick(6)"
               class="border-r-4"
               :disabled="getDisableBoard()"
+              :test="true"
             ></SquareButton>
             <SquareButton
               :value="board[2][1]"
