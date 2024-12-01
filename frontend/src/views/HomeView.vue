@@ -35,63 +35,64 @@ const createGame = () => {
 </script>
 
 <template>
-  <main>
-    <div class="flex flex-col h-screen justify-center items-center">
-      <!-- Error Alert -->
-      <n-alert
-        v-if="showAlert && gameId.length < 1"
-        title="Error"
-        type="error"
-        closable
-        class="max-w-2xl mb-16"
+  <main class="flex flex-col h-screen w-full items-center justify-center px-4">
+    <!-- Error Alert -->
+    <n-alert
+      v-if="showAlert && gameId.length < 1"
+      title="Error"
+      type="error"
+      closable
+      class="max-w-2xl mb-16"
+    >
+      {{ alertMessage }}
+    </n-alert>
+    <div
+      class="px-4 py-4 sm:px-8 md:px-12 sm:py-4 md:py-12 max-w-md mx-auto bg-zinc-700 shadow-md rounded-3xl"
+    >
+      <label
+        class="text-white font-bold mb-3 sm:mb-5 text-base sm:text-lg tracking-wider"
+        htmlFor="player-name"
       >
-        {{ alertMessage }}
-      </n-alert>
-      <div class="mb-4 bg-white shadow-md rounded px-8 pt-6 pb-8">
-        <label class="block text-black font-bold mb-5 text-lg tracking-wider" htmlFor="player-name">
-          Player Name
-        </label>
-        <input
-          class="border rounded-md w-full h-14 py-2 px-3 mb-6 text-black placeholder-gray-400 bg-gray-200 ring-2 focus:ring-lime-500 hover:ring-lime-500 focus:outline-none focus:shadow-outline tracking-widest"
-          id="player-name"
-          type="text"
-          v-model="playerName"
-        />
+        Player Name
+      </label>
+      <input
+        class="w-full border rounded-xl h-10 sm:h-14 py-2 px-4 mb-4 sm:mb-6 text-black placeholder-gray-400 bg-gray-200 ring-2 focus:ring-lime-500 hover:ring-lime-500 focus:outline-none focus:shadow-outline tracking-widest text-sm sm:text-base"
+        id="player-name"
+        type="text"
+        v-model="playerName"
+      />
 
-        <!--Game room Input-->
+      <label
+        class="text-white font-bold mb-3 sm:mb-5 text-base sm:text-lg tracking-wider"
+        htmlFor="game-room-id"
+      >
+        Game Room ID
+      </label>
+      <input
+        class="w-full border rounded-md h-10 sm:h-14 py-2 px-3 mb-4 sm:mb-6 text-black placeholder-gray-400 bg-gray-200 ring-2 focus:ring-lime-500 hover:ring-lime-500 focus:outline-none focus:shadow-outline tracking-widest text-sm sm:text-base"
+        id="game-room-id"
+        type="text"
+        placeholder="5wec1"
+        v-model="gameId"
+      />
 
-        <label
-          class="block text-black font-bold mb-5 text-lg tracking-wider"
-          htmlFor="game-room-id"
+      <div class="space-y-16">
+        <n-button
+          :loading="loading"
+          icon-placement="left"
+          @click="createGame"
+          class="w-full py-2 px-3 rounded-md text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-base sm:text-2xl font-mono bg-yellow-200 cursor-pointer hover:bg-yellow-300 transition-colors duration-200"
         >
-          Game Room ID
-        </label>
-        <input
-          class="border rounded-md w-full h-14 py-2 px-3 mb-6 text-black placeholder-gray-400 bg-gray-200 ring-2 focus:ring-lime-500 hover:ring-lime-500 focus:outline-none focus:shadow-outline tracking-widest"
-          id="game-room-id"
-          type="text"
-          placeholder="5wec1"
-          v-model="gameId"
-        />
+          {{ loading ? 'Waiting for second player to join' : 'Create Custom Game' }}
+        </n-button>
 
-        <!-- Create Game Button-->
-        <div class="mb-4">
-          <n-button
-            :loading="loading"
-            icon-placement="left"
-            @click="createGame"
-            class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-2xl font-mono bg-yellow-200 cursor-pointer"
-          >
-            {{ loading ? 'Waiting for second player to join' : 'Create Custom Game' }}
-          </n-button>
-          <button
-            class="mt-8 shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-2xl font-mono bg-red-200 cursor-pointer"
-            type="button"
-            @click="disconnectSocket()"
-          >
-            Disconnect Socket
-          </button>
-        </div>
+        <button
+          class="w-full py-2 px-3 rounded-md text-gray-700 leading-tight focus:outline-none focus:shadow-outline tracking-widest text-base sm:text-2xl font-mono bg-red-200 cursor-pointer hover:bg-red-300 transition-colors duration-200"
+          type="button"
+          @click="disconnectSocket()"
+        >
+          Disconnect Socket
+        </button>
       </div>
     </div>
   </main>
