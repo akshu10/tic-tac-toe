@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
-
 defineProps<{
   value: string | null
   onClick: (payload: MouseEvent) => void
